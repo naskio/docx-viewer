@@ -14,11 +14,16 @@ const __dirname = path.resolve();
 dotenv.config();
 
 const GENERATED_FILENAME = process.env.GENERATED_FILENAME || "sample.docx";
-
+const BUILD_DIR = path.join(__dirname, 'docx-build');
 
 // generating docx file
 Packer.toBuffer(doc_sample).then((buffer) => {
-    fs.writeFileSync(path.join(__dirname, 'docx-build', GENERATED_FILENAME), buffer);
+    // create build folder if not exists
+    if (!fs.existsSync(BUILD_DIR)) {
+        fs.mkdirSync(BUILD_DIR);
+    }
+    // write to file
+    fs.writeFileSync(path.join(BUILD_DIR, GENERATED_FILENAME), buffer);
 }).then(() => {
     console.log("Generated file: " + GENERATED_FILENAME);
     process.exit(0);

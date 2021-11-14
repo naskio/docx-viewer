@@ -11,8 +11,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"Error: no build specified\" && exit 1",
-    "start": "node index.js",
-    "generate": "nodemon generate.js",
+    "start": "nodemon -w .env --watch index.js index.js",
+    "generate": "nodemon -w .env --watch generate.js --watch docx-src generate.js",
     "forward_port": "lt --port 3000"
   },
   "devDependencies": {
@@ -26,11 +26,6 @@
     "nodemon": "^2.0.15"
   },
   "nodemonConfig": {
-    "ext": "js",
-    "delay": 0,
-    "watch": [
-      "docx-src",
-      "generate.js"
-    ]
+    "ext": "js"
   }
 }

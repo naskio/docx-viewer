@@ -5,6 +5,7 @@ import connectLivereload from 'connect-livereload';
 import ejs from 'ejs';
 import assert from "assert";
 import dotenv from 'dotenv';
+import fs from "fs";
 
 // loading environment variables
 dotenv.config();
@@ -13,7 +14,7 @@ dotenv.config();
 const PORT = 3000;
 const GENERATED_FILENAME = process.env.GENERATED_FILENAME || "sample.docx";
 const PUBLIC_URL = process.env.PUBLIC_URL;
-const RELOAD_INTERVAL = process.env.RELOAD_INTERVAL || 2500;
+const RELOAD_INTERVAL = process.env.RELOAD_INTERVAL;
 const __dirname = path.resolve();
 
 
@@ -21,13 +22,19 @@ assert(PUBLIC_URL, "PUBLIC_URL is not defined, please configure the .env file");
 
 // live reload server, listening to docx file changes
 const liveReloadServer = livereload.createServer({
-    exts: ['doc', 'docx']
+    exts: ['doc', 'docx'],
 });
-liveReloadServer.watch(path.join(__dirname, 'dont_listen_to_docx-build', GENERATED_FILENAME));
+if (!RELOAD_INTERVAL) {
+    liveReloadServer.watch(path.join(__dirname, 'docx-build', GENERATED_FILENAME));
+}
 
 const app = express()
 // injecting LiveReload client snippet
-app.use(connectLivereload());
+if (!RELOAD_INTERVAL) {
+    app.use(connectLivereload({
+        disableCompression: true,
+    }));
+}
 
 // serving index.html to view the generated docx file
 app.engine('html', ejs.renderFile);
@@ -39,8 +46,13 @@ app.get('/', (req, res) => {
     });
 })
 
+// create build folder if not exists
+const BUILD_DIR = path.join(__dirname, 'docx-build');
+if (!fs.existsSync(BUILD_DIR)) {
+    fs.mkdirSync(BUILD_DIR);
+}
 // serving docx files
-app.use('/static', express.static(path.join(__dirname, 'docx-build')))
+app.use('/static', express.static(BUILD_DIR));
 
 // starting server
 app.listen(PORT, () => {
