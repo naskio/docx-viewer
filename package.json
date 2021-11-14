@@ -7,19 +7,30 @@
   "author": "Mehdi Nassim KHODJA",
   "license": "MIT",
   "private": false,
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"Error: no build specified\" && exit 1",
     "start": "node index.js",
+    "generate": "nodemon generate.js",
     "forward_port": "lt --port 3000"
   },
-  "dependencies": {
+  "devDependencies": {
     "connect-livereload": "^0.6.1",
     "docx": "^7.1.2",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "livereload": "^0.9.3",
-    "localtunnel": "^2.0.2"
+    "localtunnel": "^2.0.2",
+    "nodemon": "^2.0.15"
+  },
+  "nodemonConfig": {
+    "ext": "js",
+    "delay": 0,
+    "watch": [
+      "docx-src/sample.js",
+      "generate.js"
+    ]
   }
 }
