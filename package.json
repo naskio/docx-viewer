@@ -1,0 +1,25 @@
+{
+  "name": "docx",
+  "version": "0.1.0",
+  "description": "docx.js dev mode",
+  "main": "index.js",
+  "repository": "github.com/naskio/docx-dev",
+  "author": "Mehdi Nassim KHODJA",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Error: no build specified\" && exit 1",
+    "start": "node index.js",
+    "forward_port": "lt --port 3000"
+  },
+  "dependencies": {
+    "connect-livereload": "^0.6.1",
+    "docx": "^7.1.2",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "livereload": "^0.9.3",
+    "localtunnel": "^2.0.2"
+  }
+}

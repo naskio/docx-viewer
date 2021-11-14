@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Docx viewer</title>
+    <style>
+        body {
+            margin: 0; /* Reset default margin */
+        }
+
+        iframe {
+            display: block; /* iframes are inline by default */
+            background: #000;
+            border: none; /* Reset default border */
+            height: 100vh; /* Viewport-relative units */
+            width: 100vw;
+        }
+    </style>
+    <script type="text/javascript">
+        function onLoadEvent() {
+            const public_url = "<%= PUBLIC_URL %>";
+            const file_name = "<%= GENERATED_FILENAME %>";
+            document.getElementById('docs-iframe').src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
+        }
+    </script>
+</head>
+<body onload="onLoadEvent()">
+<iframe id="docs-iframe">
+</iframe>
+</body>
+</html>
