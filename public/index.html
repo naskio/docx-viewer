@@ -20,12 +20,18 @@
         function onLoadEvent() {
             const public_url = "<%= PUBLIC_URL %>";
             const file_name = "<%= GENERATED_FILENAME %>";
-            document.getElementById('docs-iframe').src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
+            const RELOAD_INTERVAL = +"<%= RELOAD_INTERVAL %>";
+            const iframe_src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
+            document.getElementById('docx-viewer-iframe').src = iframe_src;
+            // reloading the iframe every few seconds
+            setInterval(function () {
+                document.getElementById('docx-viewer-iframe').src = iframe_src;
+            }, RELOAD_INTERVAL);
         }
     </script>
 </head>
 <body onload="onLoadEvent()">
-<iframe id="docs-iframe">
+<iframe id="docx-viewer-iframe">
 </iframe>
 </body>
 </html>
