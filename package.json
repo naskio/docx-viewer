@@ -29,7 +29,7 @@
     "ext": "js",
     "delay": 0,
     "watch": [
-      "docx-src/sample.js",
+      "docx-src",
       "generate.js"
     ]
   }
