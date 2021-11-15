@@ -25,12 +25,20 @@
             const file_name = "<%= GENERATED_FILENAME %>";
             const node_env = "<%= NODE_ENV %>";
             const debounce_time = +"<%= DEBOUNCE_TIME %>";
+            const viewer = "<%= VIEWER %>";
             const socket = io();
+            const file_public_url = public_url + "/static/" + file_name;
             if (node_env === 'production') {
+                console.log('file_public_url', file_public_url);
                 console.log = function () {
                 };
             }
-            const iframe_src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
+            let iframe_src;
+            if (viewer === 'GOOGLE') {
+                iframe_src = "https://docs.google.com/gview?embedded=true&url=" + file_public_url;
+            } else {
+                iframe_src = "https://view.officeapps.live.com/op/embed.aspx?src=" + file_public_url;
+            }
             // load iframe on page load
             document.getElementById('docx-viewer-iframe').src = iframe_src + "&__version=" + new Date().getTime();
             // reloading the iframe when the file is updated

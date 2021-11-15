@@ -21,6 +21,7 @@ const GENERATED_FILENAME = process.env.GENERATED_FILENAME || "output.docx";
 const PUBLIC_URL = process.env.PUBLIC_URL;
 const DEBOUNCE_TIME = process.env.DEBOUNCE_TIME || 250;
 const NODE_ENV = process.env.NODE_ENV || "development";
+const VIEWER = process.env.VIEWER || "MICROSOFT";
 const __dirname = path.resolve();
 const BUILD_DIR = path.join(__dirname, 'docx-build');
 const SRC_DIR = path.join(__dirname, 'docx-src');
@@ -51,7 +52,7 @@ io.on('connection', (socket) => {
 });
 
 // watching source.js file and generating docx file
-const watcher_src = chokidar.watch(`${SRC_DIR}/source.js`);
+const watcher_src = chokidar.watch(`${SRC_DIR}`);
 watcher_src.on('change', debounce(async (_path) => {
     try {
         console.log(`File source.js has been changed`);
@@ -88,6 +89,7 @@ app.get('/', (req, res) => {
         GENERATED_FILENAME: GENERATED_FILENAME,
         NODE_ENV: NODE_ENV,
         DEBOUNCE_TIME: DEBOUNCE_TIME,
+        VIEWER: VIEWER,
     });
 })
 

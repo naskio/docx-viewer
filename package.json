@@ -12,7 +12,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"Error: no build specified\" && exit 1",
     "start": "nodemon -w .env -w index.js -w public/index.html index.js",
-    "forward_port": "lt --port 3000"
+    "forward_port": "ngrok http 3000",
+    "forward_port:lt": "lt --port 3000"
   },
   "devDependencies": {
     "chokidar": "^3.5.2",
@@ -21,8 +22,9 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "localtunnel": "^2.0.2",
-    "nodemon": "^2.0.15",
+    "ngrok": "^4.2.2",
     "lodash.debounce": "^4.0.8",
+    "nodemon": "^2.0.15",
     "socket.io": "^4.3.2"
   },
   "nodemonConfig": {
