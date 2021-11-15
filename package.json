@@ -22,6 +22,7 @@
     "express": "^4.17.1",
     "localtunnel": "^2.0.2",
     "nodemon": "^2.0.15",
+    "lodash.debounce": "^4.0.8",
     "socket.io": "^4.3.2"
   },
   "nodemonConfig": {
