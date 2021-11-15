@@ -1,6 +1,6 @@
 # docx-viewer
 
-![docx-dev icon](public/assets/favicon.ico)
+![docx-viewer icon](public/assets/favicon.ico)
 
 View the output of your .docx LIVE in your browser while you are coding it using [docx.js](https://docx.js.org/).
 
@@ -20,7 +20,7 @@ easily. It offers a viewer for your .docx file, and a live preview of your code 
 
 # Getting Started
 
-1. Start by cloning the repository: `git clone git@github.com:naskio/docx-dev.git`
+1. Start by cloning the repository: `git clone git@github.com:naskio/docx-viewer.git`
 2. Install dependencies: `yarn install`
 3. Run forward port script: `yarn forward_port`
 4. Create `.env` file : `cp .env.example .env`
@@ -33,5 +33,5 @@ easily. It offers a viewer for your .docx file, and a live preview of your code 
 
 # Contributing
 
-Don't hesitate to [open an issue](https://github.com/naskio/docx-dev/issues) or
-to [submit a pull request](https://github.com/naskio/docx-dev/pulls) if you have any questions or suggestions.
+Don't hesitate to [open an issue](https://github.com/naskio/docx-viewer/issues) or
+to [submit a pull request](https://github.com/naskio/docx-viewer/pulls) if you have any questions or suggestions.
