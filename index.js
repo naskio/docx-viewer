@@ -8,6 +8,7 @@ import docx from 'docx';
 import * as http from "http";
 import {Server} from "socket.io";
 import chokidar from 'chokidar';
+import nocache from 'nocache';
 // import debounce from 'lodash.debounce';
 
 const debounce = (x) => x;
@@ -21,7 +22,8 @@ const GENERATED_FILENAME = process.env.GENERATED_FILENAME || "output.docx";
 const PUBLIC_URL = process.env.PUBLIC_URL;
 const DEBOUNCE_TIME = process.env.DEBOUNCE_TIME || 250;
 const NODE_ENV = process.env.NODE_ENV || "development";
-const VIEWER = process.env.VIEWER || "MICROSOFT";
+const VIEWER = process.env.VIEWER || "GOOGLE";
+const STRATEGY = process.env.STRATEGY || "static";
 const __dirname = path.resolve();
 const BUILD_DIR = path.join(__dirname, 'docx-build');
 const SRC_DIR = path.join(__dirname, 'docx-src');
@@ -83,6 +85,7 @@ watcher_build.on('change', debounce((_path) => {
 
 // serving index.html to view the generated docx file
 app.engine('html', ejs.renderFile);
+app.use(nocache());
 app.get('/', (req, res) => {
     res.render(path.join(__dirname, 'public', 'index.html'), {
         PUBLIC_URL: PUBLIC_URL,
@@ -90,8 +93,20 @@ app.get('/', (req, res) => {
         NODE_ENV: NODE_ENV,
         DEBOUNCE_TIME: DEBOUNCE_TIME,
         VIEWER: VIEWER,
+        STRATEGY: STRATEGY,
     });
 })
+
+app.get("/generate/:id", async (req, res) => {
+    try {
+        const doc_sample = await import(`./docx-src/source.js?version=${new Date()}`);
+        const b64string = await Packer.toBase64String(doc_sample.default);
+        res.setHeader('Content-Disposition', `attachment; filename=${GENERATED_FILENAME}`);
+        res.send(Buffer.from(b64string, 'base64'));
+    } catch (err) {
+        console.error("Error while generating file", GENERATED_FILENAME, err.message);
+    }
+});
 
 // serving docx files
 app.use('/static', express.static(BUILD_DIR));

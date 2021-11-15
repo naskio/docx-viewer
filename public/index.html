@@ -26,24 +26,29 @@
             const node_env = "<%= NODE_ENV %>";
             const debounce_time = +"<%= DEBOUNCE_TIME %>";
             const viewer = "<%= VIEWER %>";
+            const strategy = "<%= STRATEGY %>";
             const socket = io();
-            const file_public_url = public_url + "/static/" + file_name;
+
+            function getDocxUrl(public_url, file_name, strategy, version) {
+                const iframe = viewer === 'GOOGLE' ? "https://docs.google.com/gview?embedded=true&url=" : "https://view.officeapps.live.com/op/embed.aspx?src=";
+                if (strategy === "static") {
+                    return iframe + public_url + "/static/" + file_name + "&__version__=" + version;
+                } else {
+                    return iframe + public_url + "/generate/" + version + "/";
+                }
+            }
+
             if (node_env === 'production') {
-                console.log('file_public_url', file_public_url);
+                console.log('file_public_url', public_url);
+                console.log('file_public_url', getDocxUrl(public_url, file_name, strategy, new Date().getTime()));
                 console.log = function () {
                 };
             }
-            let iframe_src;
-            if (viewer === 'GOOGLE') {
-                iframe_src = "https://docs.google.com/gview?embedded=true&url=" + file_public_url;
-            } else {
-                iframe_src = "https://view.officeapps.live.com/op/embed.aspx?src=" + file_public_url;
-            }
             // load iframe on page load
-            document.getElementById('docx-viewer-iframe').src = iframe_src + "&__version=" + new Date().getTime();
+            document.getElementById('docx-viewer-iframe').src = getDocxUrl(public_url, file_name, strategy, new Date().getTime());
             // reloading the iframe when the file is updated
             socket.on('reload', _.debounce(function () {
-                document.getElementById('docx-viewer-iframe').src = iframe_src + "&__version=" + new Date().getTime();
+                document.getElementById('docx-viewer-iframe').src = getDocxUrl(public_url, file_name, strategy, new Date().getTime());
                 console.log('reload event received');
             }, debounce_time, {
                 leading: false,
