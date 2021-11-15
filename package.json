@@ -1,9 +1,9 @@
 {
-  "name": "docx",
-  "version": "0.1.0",
+  "name": "docx-viewer",
+  "version": "0.2.0",
   "description": "docx.js dev mode",
   "main": "index.js",
-  "repository": "github.com/naskio/docx-dev",
+  "repository": "github.com/naskio/docx-viewer",
   "author": "Mehdi Nassim KHODJA",
   "license": "MIT",
   "private": false,

@@ -1,4 +1,4 @@
-# docx-dev
+# docx-viewer
 
 ![docx-dev icon](public/assets/favicon.ico)
 
