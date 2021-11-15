@@ -118,5 +118,5 @@ docx-build/
 __tmp__/
 
 # docx-src
-!docx-src/sample.js
+!docx-src/source.js
 docx-src/*
