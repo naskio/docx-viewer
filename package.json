@@ -11,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"Error: no build specified\" && exit 1",
-    "start": "nodemon -w .env --watch index.js index.js",
+    "start": "nodemon -w .env -w index.js -w public/index.html index.js",
     "forward_port": "lt --port 3000"
   },
   "devDependencies": {

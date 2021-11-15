@@ -11,6 +11,7 @@ const doc = new Document({
                     new TextRun({
                         text: "Hello",
                         italics: true,
+                        size: 40,
                     }),
                 ],
             }),
@@ -19,6 +20,7 @@ const doc = new Document({
                     new TextRun({
                         text: "World !",
                         bold: true,
+                        size: 40,
                     }),
                 ],
             }),
@@ -28,7 +30,7 @@ const doc = new Document({
                         text: "v1",
                         italics: true,
                         bold: true,
-                        size: 32,
+                        size: 40,
                     }),
                 ],
             }),

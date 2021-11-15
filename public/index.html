@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/assets/favicon.ico"/>
     <title>Docx viewer</title>
     <style>
         body {
@@ -16,12 +17,14 @@
             width: 100vw;
         }
     </style>
+    <script src="/assets/lodash.min.js"></script>
     <script src="/socket.io.local/socket.io.js"></script>
     <script type="text/javascript">
         function onLoadEvent() {
             const public_url = "<%= PUBLIC_URL %>";
             const file_name = "<%= GENERATED_FILENAME %>";
             const node_env = "<%= NODE_ENV %>";
+            const debounce_time = +"<%= DEBOUNCE_TIME %>";
             const socket = io();
             if (node_env === 'production') {
                 console.log = function () {
@@ -29,12 +32,15 @@
             }
             const iframe_src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
             // load iframe on page load
-            document.getElementById('docx-viewer-iframe').src = iframe_src;
+            document.getElementById('docx-viewer-iframe').src = iframe_src + "&__version=" + new Date().getTime();
             // reloading the iframe when the file is updated
-            socket.on('reload', function () {
-                document.getElementById('docx-viewer-iframe').src = iframe_src;
+            socket.on('reload', _.debounce(function () {
+                document.getElementById('docx-viewer-iframe').src = iframe_src + "&__version=" + new Date().getTime();
                 console.log('reload event received');
-            });
+            }, debounce_time, {
+                leading: false,
+                trailing: true,
+            }));
         }
     </script>
 </head>

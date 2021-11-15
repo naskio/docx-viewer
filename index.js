@@ -8,8 +8,9 @@ import docx from 'docx';
 import * as http from "http";
 import {Server} from "socket.io";
 import chokidar from 'chokidar';
-import debounce from 'lodash.debounce';
+// import debounce from 'lodash.debounce';
 
+const debounce = (x) => x;
 
 // loading environment variables
 dotenv.config();
@@ -18,7 +19,7 @@ dotenv.config();
 const PORT = 3000;
 const GENERATED_FILENAME = process.env.GENERATED_FILENAME || "output.docx";
 const PUBLIC_URL = process.env.PUBLIC_URL;
-const DEBOUNCE_TIME = process.env.DEBOUNCE_TIME || 500;
+const DEBOUNCE_TIME = process.env.DEBOUNCE_TIME || 250;
 const NODE_ENV = process.env.NODE_ENV || "development";
 const __dirname = path.resolve();
 const BUILD_DIR = path.join(__dirname, 'docx-build');
@@ -49,6 +50,25 @@ io.on('connection', (socket) => {
     });
 });
 
+// watching source.js file and generating docx file
+const watcher_src = chokidar.watch(`${SRC_DIR}/source.js`);
+watcher_src.on('change', debounce(async (_path) => {
+    try {
+        console.log(`File source.js has been changed`);
+        const doc_sample = await import(`./docx-src/source.js?version=${new Date()}`);
+        // write to file
+        const buffer = await Packer.toBuffer(doc_sample.default);
+        fs.writeFileSync(path.join(BUILD_DIR, GENERATED_FILENAME), buffer);
+        console.log(GENERATED_FILENAME, "has been generated");
+    } catch (err) {
+        console.error("Error while generating file", GENERATED_FILENAME, err.message);
+    }
+}, DEBOUNCE_TIME, {
+    leading: false,
+    trailing: true,
+}));
+
+
 // listening to docx file changes and emit reload event
 const watcher_build = chokidar.watch(`${BUILD_DIR}/${GENERATED_FILENAME}`);
 watcher_build.on('change', debounce((_path) => {
@@ -56,7 +76,7 @@ watcher_build.on('change', debounce((_path) => {
     io.sockets.emit('reload'); // emit reload event to clients
     console.log(`reload event sent at`, new Date());
 }, DEBOUNCE_TIME, {
-    leading: true,
+    leading: false,
     trailing: true,
 }));
 
@@ -67,30 +87,14 @@ app.get('/', (req, res) => {
         PUBLIC_URL: PUBLIC_URL,
         GENERATED_FILENAME: GENERATED_FILENAME,
         NODE_ENV: NODE_ENV,
+        DEBOUNCE_TIME: DEBOUNCE_TIME,
     });
 })
 
-// watching source.js file and generating docx file
-const watcher_src = chokidar.watch(`${SRC_DIR}/source.js`);
-watcher_src.on('change', debounce(async (_path) => {
-    console.log(`File source.js has been changed`);
-    const doc_sample = await import(`./docx-src/source.js?version=${new Date()}`);
-    // write to file
-    Packer.toBuffer(doc_sample.default).then((buffer) => {
-        fs.writeFileSync(path.join(BUILD_DIR, GENERATED_FILENAME), buffer);
-    }).then(() => {
-        console.log(GENERATED_FILENAME, "has been generated");
-    }).catch((err) => {
-        console.error("Error while generating file", GENERATED_FILENAME, err);
-    });
-}, DEBOUNCE_TIME, {
-    leading: true,
-    trailing: true,
-}));
-
-
 // serving docx files
 app.use('/static', express.static(BUILD_DIR));
+// serving assets
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 // serving socket.io client
 app.use('/socket.io.local', express.static(path.join(__dirname, 'node_modules', 'socket.io', 'client-dist')));
 
