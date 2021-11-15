@@ -16,19 +16,20 @@
             width: 100vw;
         }
     </style>
+    <script src="/socket.io.local/socket.io.js"></script>
     <script type="text/javascript">
         function onLoadEvent() {
             const public_url = "<%= PUBLIC_URL %>";
             const file_name = "<%= GENERATED_FILENAME %>";
-            const RELOAD_INTERVAL = +"<%= RELOAD_INTERVAL %>";
+            const socket = io();
             const iframe_src = "https://docs.google.com/gview?url=" + public_url + "/static/" + file_name + "&embedded=true";
+            // load iframe on page load
             document.getElementById('docx-viewer-iframe').src = iframe_src;
-            // reloading the iframe every few seconds
-            if (RELOAD_INTERVAL && RELOAD_INTERVAL > 0) {
-                setInterval(function () {
-                    document.getElementById('docx-viewer-iframe').src = iframe_src;
-                }, RELOAD_INTERVAL);
-            }
+            // reloading the iframe when the file is updated
+            socket.on('reload', function () {
+                console.log('reload event received');
+                document.getElementById('docx-viewer-iframe').src = iframe_src;
+            });
         }
     </script>
 </head>
