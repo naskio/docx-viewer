@@ -25,7 +25,7 @@ const doc = new Document({
             new Paragraph({
                 children: [
                     new TextRun({
-                        text: "1",
+                        text: "v1",
                         italics: true,
                         bold: true,
                         size: 32,

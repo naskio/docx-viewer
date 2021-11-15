@@ -5,7 +5,6 @@ import assert from "assert";
 import dotenv from 'dotenv';
 import * as fs from "fs";
 import docx from 'docx';
-import chokidar from 'chokidar';
 import * as http from "http";
 import {Server} from "socket.io";
 
@@ -40,19 +39,11 @@ io.on('connection', (socket) => {
     });
 });
 
-// live reload server, listening to docx file changes
-// const watcher = chokidar.watch(`${BUILD_DIR}/*.(doc|docx)`);
-const watcher_build = chokidar.watch(`${BUILD_DIR}/${GENERATED_FILENAME}`, {
-    persistent: true,
-    awaitWriteFinish: {
-        stabilityThreshold: 1000,
-        pollInterval: 100
-    },
-});
-watcher_build.on('change', (_path) => {
-    console.log(`File ${_path} has been changed`);
+// listening to docx file changes and emit reload event
+fs.watch(`${BUILD_DIR}/${GENERATED_FILENAME}`, () => {
+    console.log(`File ${GENERATED_FILENAME} has been changed`);
     io.sockets.emit('reload'); // emit reload event to clients
-    console.log(`reload event sent`);
+    console.log(`reload event sent at`, new Date());
 });
 
 // serving index.html to view the generated docx file
@@ -65,23 +56,16 @@ app.get('/', (req, res) => {
 })
 
 // watching source.js file and generating docx file
-const watcher_src = chokidar.watch(`${path.join(__dirname, 'docx-src')}/source.js`, {
-    awaitWriteFinish: {
-        stabilityThreshold: 1000,
-        pollInterval: 100
-    },
-    persistent: true,
-});
-watcher_src.on('change', async (_path) => {
-    console.log(`File ${_path} has been changed`);
-    const doc_sample = await import('./docx-src/source.js');
+fs.watch(`${path.join(__dirname, 'docx-src')}/source.js`, async () => {
+    console.log(`File source.js has been changed`);
+    const doc_sample = await import(`./docx-src/source.js?version=${Math.random()}`);
     // write to file
     Packer.toBuffer(doc_sample.default).then((buffer) => {
         fs.writeFileSync(path.join(BUILD_DIR, GENERATED_FILENAME), buffer);
     }).then(() => {
-        console.log("Generated file:", GENERATED_FILENAME);
+        console.log(GENERATED_FILENAME, "has been generated");
     }).catch((err) => {
-        console.error("Error while generating file:", err);
+        console.error("Error while generating file", GENERATED_FILENAME, err);
     });
 });
 
